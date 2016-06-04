@@ -29,5 +29,31 @@ void addto_queue(int num, struct queue* qu) {
 
 }
 
+int popoff_queue(struct queue* qu) {
+  int temp;
+  
+  struct node* release;
+  if(!is_empty(qu)) {
+    temp = qu->top->number;
+    release = qu->top;
+    qu->top = qu->top->next;
+    qu->sz = qu->sz - 1;
+    free(release);
+    if(qu->sz == 0) {
+      qu->bot = 0;
+      qu->top = 0;
+    }
+    return temp;
+  }
+  return -1;
+}
 
+int is_empty(struct queue* qu) {
+  if(qu->sz != 0) {
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
   

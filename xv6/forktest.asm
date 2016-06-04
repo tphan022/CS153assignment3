@@ -550,8 +550,7 @@ memmove(void *vdst, void *vsrc, int n)
 }
  36b:	c9                   	leave  
  36c:	c3                   	ret    
- 36d:	90                   	nop
- 36e:	90                   	nop
+ 36d:	66 90                	xchg   %ax,%ax
  36f:	90                   	nop
 
 00000370 <fork>:

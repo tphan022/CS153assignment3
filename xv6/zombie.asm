@@ -424,8 +424,7 @@ memmove(void *vdst, void *vsrc, int n)
 }
  27b:	c9                   	leave  
  27c:	c3                   	ret    
- 27d:	90                   	nop
- 27e:	90                   	nop
+ 27d:	66 90                	xchg   %ax,%ax
  27f:	90                   	nop
 
 00000280 <fork>:
@@ -635,7 +634,7 @@ printint(int fd, int xx, int base, int sgn)
  391:	ba 00 00 00 00       	mov    $0x0,%edx
  396:	f7 f3                	div    %ebx
  398:	89 d0                	mov    %edx,%eax
- 39a:	0f b6 80 54 08 00 00 	movzbl 0x854(%eax),%eax
+ 39a:	0f b6 80 7c 09 00 00 	movzbl 0x97c(%eax),%eax
  3a1:	88 44 0d dc          	mov    %al,-0x24(%ebp,%ecx,1)
  3a5:	83 45 ec 01          	addl   $0x1,-0x14(%ebp)
   }while((x /= base) != 0);
@@ -790,7 +789,7 @@ printf(int fd, char *fmt, ...)
  4f4:	83 7d e4 00          	cmpl   $0x0,-0x1c(%ebp)
  4f8:	75 27                	jne    521 <printf+0x120>
           s = "(null)";
- 4fa:	c7 45 e4 4a 08 00 00 	movl   $0x84a,-0x1c(%ebp)
+ 4fa:	c7 45 e4 dd 08 00 00 	movl   $0x8dd,-0x1c(%ebp)
         while(*s != 0){
  501:	eb 1f                	jmp    522 <printf+0x121>
           putc(fd, *s);
@@ -902,7 +901,7 @@ free(void *ap)
  5c1:	83 e8 08             	sub    $0x8,%eax
  5c4:	89 45 f8             	mov    %eax,-0x8(%ebp)
   for(p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
- 5c7:	a1 70 08 00 00       	mov    0x870,%eax
+ 5c7:	a1 98 09 00 00       	mov    0x998,%eax
  5cc:	89 45 fc             	mov    %eax,-0x4(%ebp)
  5cf:	eb 24                	jmp    5f5 <free+0x3d>
     if(p >= p->s.ptr && (bp > p || bp < p->s.ptr))
@@ -995,7 +994,7 @@ free(void *ap)
  683:	89 10                	mov    %edx,(%eax)
   freep = p;
  685:	8b 45 fc             	mov    -0x4(%ebp),%eax
- 688:	a3 70 08 00 00       	mov    %eax,0x870
+ 688:	a3 98 09 00 00       	mov    %eax,0x998
 }
  68d:	c9                   	leave  
  68e:	c3                   	ret    
@@ -1041,7 +1040,7 @@ morecore(uint nu)
  6d8:	89 04 24             	mov    %eax,(%esp)
  6db:	e8 d8 fe ff ff       	call   5b8 <free>
   return freep;
- 6e0:	a1 70 08 00 00       	mov    0x870,%eax
+ 6e0:	a1 98 09 00 00       	mov    0x998,%eax
 }
  6e5:	c9                   	leave  
  6e6:	c3                   	ret    
@@ -1064,18 +1063,18 @@ malloc(uint nbytes)
  6f6:	83 c0 01             	add    $0x1,%eax
  6f9:	89 45 f4             	mov    %eax,-0xc(%ebp)
   if((prevp = freep) == 0){
- 6fc:	a1 70 08 00 00       	mov    0x870,%eax
+ 6fc:	a1 98 09 00 00       	mov    0x998,%eax
  701:	89 45 f0             	mov    %eax,-0x10(%ebp)
  704:	83 7d f0 00          	cmpl   $0x0,-0x10(%ebp)
  708:	75 23                	jne    72d <malloc+0x46>
     base.s.ptr = freep = prevp = &base;
- 70a:	c7 45 f0 68 08 00 00 	movl   $0x868,-0x10(%ebp)
+ 70a:	c7 45 f0 90 09 00 00 	movl   $0x990,-0x10(%ebp)
  711:	8b 45 f0             	mov    -0x10(%ebp),%eax
- 714:	a3 70 08 00 00       	mov    %eax,0x870
- 719:	a1 70 08 00 00       	mov    0x870,%eax
- 71e:	a3 68 08 00 00       	mov    %eax,0x868
+ 714:	a3 98 09 00 00       	mov    %eax,0x998
+ 719:	a1 98 09 00 00       	mov    0x998,%eax
+ 71e:	a3 90 09 00 00       	mov    %eax,0x990
     base.s.size = 0;
- 723:	c7 05 6c 08 00 00 00 	movl   $0x0,0x86c
+ 723:	c7 05 94 09 00 00 00 	movl   $0x0,0x994
  72a:	00 00 00 
   }
   for(p = prevp->s.ptr; ; prevp = p, p = p->s.ptr){
@@ -1118,14 +1117,14 @@ malloc(uint nbytes)
       }
       freep = prevp;
  77d:	8b 45 f0             	mov    -0x10(%ebp),%eax
- 780:	a3 70 08 00 00       	mov    %eax,0x870
+ 780:	a3 98 09 00 00       	mov    %eax,0x998
       return (void*)(p + 1);
  785:	8b 45 ec             	mov    -0x14(%ebp),%eax
  788:	83 c0 08             	add    $0x8,%eax
  78b:	eb 38                	jmp    7c5 <malloc+0xde>
     }
     if(p == freep)
- 78d:	a1 70 08 00 00       	mov    0x870,%eax
+ 78d:	a1 98 09 00 00       	mov    0x998,%eax
  792:	39 45 ec             	cmp    %eax,-0x14(%ebp)
  795:	75 1b                	jne    7b2 <malloc+0xcb>
       if((p = morecore(nunits)) == 0)
@@ -1236,3 +1235,87 @@ void addto_queue(int num, struct queue* qu) {
 }
  848:	c9                   	leave  
  849:	c3                   	ret    
+
+0000084a <popoff_queue>:
+
+int popoff_queue(struct queue* qu) {
+ 84a:	55                   	push   %ebp
+ 84b:	89 e5                	mov    %esp,%ebp
+ 84d:	83 ec 28             	sub    $0x28,%esp
+  int temp;
+  
+  struct node* release;
+  if(!is_empty(qu)) {
+ 850:	8b 45 08             	mov    0x8(%ebp),%eax
+ 853:	89 04 24             	mov    %eax,(%esp)
+ 856:	e8 68 00 00 00       	call   8c3 <is_empty>
+ 85b:	85 c0                	test   %eax,%eax
+ 85d:	75 5d                	jne    8bc <popoff_queue+0x72>
+    temp = qu->top->number;
+ 85f:	8b 45 08             	mov    0x8(%ebp),%eax
+ 862:	8b 40 04             	mov    0x4(%eax),%eax
+ 865:	8b 00                	mov    (%eax),%eax
+ 867:	89 45 f4             	mov    %eax,-0xc(%ebp)
+    release = qu->top;
+ 86a:	8b 45 08             	mov    0x8(%ebp),%eax
+ 86d:	8b 40 04             	mov    0x4(%eax),%eax
+ 870:	89 45 f0             	mov    %eax,-0x10(%ebp)
+    qu->top = qu->top->next;
+ 873:	8b 45 08             	mov    0x8(%ebp),%eax
+ 876:	8b 40 04             	mov    0x4(%eax),%eax
+ 879:	8b 50 04             	mov    0x4(%eax),%edx
+ 87c:	8b 45 08             	mov    0x8(%ebp),%eax
+ 87f:	89 50 04             	mov    %edx,0x4(%eax)
+    qu->sz = qu->sz - 1;
+ 882:	8b 45 08             	mov    0x8(%ebp),%eax
+ 885:	8b 00                	mov    (%eax),%eax
+ 887:	8d 50 ff             	lea    -0x1(%eax),%edx
+ 88a:	8b 45 08             	mov    0x8(%ebp),%eax
+ 88d:	89 10                	mov    %edx,(%eax)
+    free(release);
+ 88f:	8b 45 f0             	mov    -0x10(%ebp),%eax
+ 892:	89 04 24             	mov    %eax,(%esp)
+ 895:	e8 1e fd ff ff       	call   5b8 <free>
+    if(qu->sz == 0) {
+ 89a:	8b 45 08             	mov    0x8(%ebp),%eax
+ 89d:	8b 00                	mov    (%eax),%eax
+ 89f:	85 c0                	test   %eax,%eax
+ 8a1:	75 14                	jne    8b7 <popoff_queue+0x6d>
+      qu->bot = 0;
+ 8a3:	8b 45 08             	mov    0x8(%ebp),%eax
+ 8a6:	c7 40 08 00 00 00 00 	movl   $0x0,0x8(%eax)
+      qu->top = 0;
+ 8ad:	8b 45 08             	mov    0x8(%ebp),%eax
+ 8b0:	c7 40 04 00 00 00 00 	movl   $0x0,0x4(%eax)
+    }
+    return temp;
+ 8b7:	8b 45 f4             	mov    -0xc(%ebp),%eax
+ 8ba:	eb 05                	jmp    8c1 <popoff_queue+0x77>
+  }
+  return -1;
+ 8bc:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
+}
+ 8c1:	c9                   	leave  
+ 8c2:	c3                   	ret    
+
+000008c3 <is_empty>:
+
+int is_empty(struct queue* qu) {
+ 8c3:	55                   	push   %ebp
+ 8c4:	89 e5                	mov    %esp,%ebp
+  if(qu->sz != 0) {
+ 8c6:	8b 45 08             	mov    0x8(%ebp),%eax
+ 8c9:	8b 00                	mov    (%eax),%eax
+ 8cb:	85 c0                	test   %eax,%eax
+ 8cd:	74 07                	je     8d6 <is_empty+0x13>
+    return 0;
+ 8cf:	b8 00 00 00 00       	mov    $0x0,%eax
+ 8d4:	eb 05                	jmp    8db <is_empty+0x18>
+  }
+  else {
+    return 1;
+ 8d6:	b8 01 00 00 00       	mov    $0x1,%eax
+  }
+}
+ 8db:	5d                   	pop    %ebp
+ 8dc:	c3                   	ret    
